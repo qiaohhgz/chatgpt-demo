@@ -1,0 +1,21 @@
+{
+  "id": "chatcmpl-72cPcT2HnaWrkUxLehHPFEuhdIOIP",
+  "object": "chat.completion",
+  "created": 1680858668,
+  "model": "gpt-3.5-turbo-0301",
+  "usage": {
+    "prompt_tokens": 11,
+    "completion_tokens": 23,
+    "total_tokens": 34
+  },
+  "choices": [
+    {
+      "message": {
+        "role": "assistant",
+        "content": "我能说中文，您需要我帮您翻译什么吗？"
+      },
+      "finish_reason": "stop",
+      "index": 0
+    }
+  ]
+}

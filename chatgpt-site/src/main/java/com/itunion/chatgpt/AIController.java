@@ -88,7 +88,10 @@ public class AIController
                     .send(requestBody)
                     .body();
             log.info("chat request text:{}, response: {}", text, body);
-            return ResponseEntity.ok(body);
+            JSONObject jsonObject = JSON.parseObject(body);
+            JSONObject choices = jsonObject.getJSONArray("choices").getJSONObject(0);
+            JSONObject content = choices.getJSONObject("message").getJSONObject("content");
+            return ResponseEntity.ok(content);
         } catch (Exception e)
         {
             log.error(e.getMessage(), e);
