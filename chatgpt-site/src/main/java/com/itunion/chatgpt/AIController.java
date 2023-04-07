@@ -1,6 +1,8 @@
 package com.itunion.chatgpt;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +43,7 @@ public class AIController
      * @return
      */
     @GetMapping("/api/send")
-    public ResponseEntity<?> chat(String text)
+    public ResponseEntity<?> send(String text)
     {
         log.info("send text: {}", text);
         Message message = new Message();
@@ -51,6 +53,36 @@ public class AIController
             String requestBody = JSON.toJSONString(message);
             log.info("send requestBody: {}", requestBody);
             String body = HttpRequest.post("https://api.openai.com/v1/completions")
+                    .contentType("application/json")
+                    .authorization("Bearer " + openApiKey)
+                    .send(requestBody)
+                    .body();
+            log.info("chat request text:{}, response: {}", text, body);
+            return ResponseEntity.ok(body);
+        } catch (Exception e)
+        {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/chat")
+    public ResponseEntity<?> chat(String text)
+    {
+        log.info("send text: {}", text);
+        JSONObject message = new JSONObject();
+        message.put("model", "gpt-3.5-turbo");
+        JSONArray messages = new JSONArray();
+        JSONObject item = new JSONObject();
+        item.put("role", "user");
+        item.put("content", text);
+        messages.add(item);
+        message.put("messages", messages);
+        try
+        {
+            String requestBody = message.toJSONString();
+            log.info("send requestBody: {}", requestBody);
+            String body = HttpRequest.post("https://api.openai.com/v1/chat/completions")
                     .contentType("application/json")
                     .authorization("Bearer " + openApiKey)
                     .send(requestBody)
