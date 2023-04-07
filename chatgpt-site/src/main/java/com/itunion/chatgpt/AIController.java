@@ -43,6 +43,7 @@ public class AIController
     @GetMapping("/api/send")
     public ResponseEntity<?> chat(String text)
     {
+        log.info("send text: {}", text);
         Message message = new Message();
         message.setPrompt(text);
         try
