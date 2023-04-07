@@ -3,14 +3,26 @@ package com.itunion.chatgpt;
 import com.alibaba.fastjson.JSON;
 import com.github.kevinsawicki.http.HttpRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.PostConstruct;
 
 @Slf4j
 @RestController
 public class AIController
 {
+    @Value("${OPENAI_API_KEY}")
+    private String openApiKey;
+
+    @PostConstruct
+    public void init()
+    {
+        log.info("openApiKey = {}", openApiKey);
+    }
+
     /**
      * curl https://api.openai.com/v1/completions \
      * -H "Content-Type: application/json" \
@@ -29,10 +41,8 @@ public class AIController
      * @return
      */
     @GetMapping("/api/send")
-    public ResponseEntity<?> chat(String key, String text)
+    public ResponseEntity<?> chat(String text)
     {
-        log.info("chat key: {}", key);
-
         Message message = new Message();
         message.setPrompt(text);
         try
@@ -41,7 +51,7 @@ public class AIController
             log.info("send requestBody: {}", requestBody);
             String body = HttpRequest.post("https://api.openai.com/v1/completions")
                     .contentType("application/json")
-                    .authorization("Bearer " + key)
+                    .authorization("Bearer " + openApiKey)
                     .send(requestBody)
                     .body();
             log.info("chat request text:{}, response: {}", text, body);
